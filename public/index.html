@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hearth &amp; Bean — Neighbourhood Café</title>
+  <meta name="description" content="Hearth & Bean is a cozy neighbourhood café serving slow-brewed coffee, fresh bakes and warm bites.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="nav" id="top">
+    <a class="brand" href="#top">Hearth <span>&amp;</span> Bean</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <nav id="navLinks">
+      <a href="#menu">Menu</a>
+      <a href="#story">Our Story</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn" aria-label="Open order cart">Your order <span id="cartCount">0</span></button>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Open daily · 8 AM – 10 PM</p>
+        <h1>Slow mornings,<br><em>warm cups.</em></h1>
+        <p class="lead">A little corner café where the coffee is brewed with patience, the bakes come out of the oven at dawn, and nobody rushes you.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#menu">See the menu</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU -->
+    <section class="section" id="menu">
+      <div class="section-head">
+        <p class="eyebrow">What we serve</p>
+        <h2>The Menu</h2>
+        <p class="sub">Add anything to your order and we'll have it ready for pickup.</p>
+      </div>
+
+      <!-- MY OWN ADDITION: today's special banner -->
+      <div class="special">
+        <span class="special-tag">Today's special</span>
+        <p>A Hearth Latte with a warm slice of banana loaf. Ask at the counter.</p>
+      </div>
+
+      <div class="tabs" id="menuTabs" role="tablist"></div>
+      <div class="menu-grid" id="menuGrid">
+        <p class="muted">Loading the menu…</p>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>
