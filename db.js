@@ -117,5 +117,60 @@ async function deleteMenuItem(id) {
   const r = await pool.query('delete from menu_items where id = $1', [id]);
   return r.rowCount > 0;
 }
+async function createOrder({ name, phone, note, items, total }) {
+  const client = await pool.connect();
+  try {
+    await client.query('begin');
+    const o = await client.query(
+      `insert into orders (name, phone, note, total)
+       values ($1,$2,$3,$4) returning id`,
+      [name, phone, note || '', total]
+    );
+    const orderId = o.rows[0].id;
+    for (const it of items) {
+      await client.query(
+        `insert into order_items (order_id, menu_item_id, name, price, qty)
+         values ($1,$2,$3,$4,$5)`,
+        [orderId, it.id, it.name, it.price, it.qty]
+      );
+    }
+    await client.query('commit');
+    return { id: orderId, total };
+  } catch (e) {
+    await client.query('rollback');
+    throw e;
+  } finally {
+    client.release();
+  }
+}
 
-module.exports = { pool, init, getMenu, getAllMenu, addMenuItem, updateMenuItem, deleteMenuItem };
+async function listOrders() {
+  const r = await pool.query(`
+    select o.id, o.name, o.phone, o.note, o.total::float as total, o.status,
+           o.created_at as "createdAt",
+           coalesce(json_agg(json_build_object(
+             'id', i.menu_item_id, 'name', i.name,
+             'price', i.price::float, 'qty', i.qty
+           )) filter (where i.id is not null), '[]') as items
+    from orders o
+    left join order_items i on i.order_id = o.id
+    group by o.id
+    order by o.id desc
+  `);
+  return r.rows;
+}
+
+async function updateOrderStatus(id, status) {
+  const r = await pool.query(
+    `update orders set status = $1 where id = $2
+     returning id, status`,
+    [status, id]
+  );
+  return r.rows[0] || null;
+}
+
+module.exports = {
+  pool, init,
+  getMenu, getAllMenu, addMenuItem, updateMenuItem, deleteMenuItem,
+  createOrder, listOrders, updateOrderStatus,
+};
