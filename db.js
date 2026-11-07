@@ -168,9 +168,63 @@ async function updateOrderStatus(id, status) {
   );
   return r.rows[0] || null;
 }
+async function createReservation({ name, phone, date, time, guests, notes }) {
+  const r = await pool.query(
+    `insert into reservations (name, phone, date, time, guests, notes)
+     values ($1,$2,$3,$4,$5,$6) returning id`,
+    [name, phone, date, time, guests, notes || '']
+  );
+  return { id: r.rows[0].id };
+}
 
+// total guests already booked for one date + time (cancelled ones don't count)
+async function countGuests(date, time) {
+  const r = await pool.query(
+    `select coalesce(sum(guests), 0)::int as n
+     from reservations
+     where date = $1 and time = $2 and status <> 'cancelled'`,
+    [date, time]
+  );
+  return r.rows[0].n;
+}
+
+async function listReservations() {
+  const r = await pool.query(
+    `select id, name, phone, to_char(date, 'YYYY-MM-DD') as date,
+            to_char(time, 'HH24:MI') as time, guests, notes, status,
+            created_at as "createdAt"
+     from reservations order by id desc`
+  );
+  return r.rows;
+}
+
+async function updateReservationStatus(id, status) {
+  const r = await pool.query(
+    `update reservations set status = $1 where id = $2 returning id, status`,
+    [status, id]
+  );
+  return r.rows[0] || null;
+}
+
+async function createMessage({ name, email, message }) {
+  const r = await pool.query(
+    `insert into messages (name, email, message) values ($1,$2,$3) returning id`,
+    [name, email, message]
+  );
+  return { id: r.rows[0].id };
+}
+
+async function listMessages() {
+  const r = await pool.query(
+    `select id, name, email, message, created_at as "createdAt"
+     from messages order by id desc`
+  );
+  return r.rows;
+}
 module.exports = {
   pool, init,
   getMenu, getAllMenu, addMenuItem, updateMenuItem, deleteMenuItem,
   createOrder, listOrders, updateOrderStatus,
+  createReservation, countGuests, listReservations, updateReservationStatus,
+  createMessage, listMessages,
 };
