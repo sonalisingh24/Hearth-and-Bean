@@ -1,18 +1,30 @@
-const express = require('express');
-const path = require('path');
+const express = require("express");
+const path = require("path");
+const db = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.get('/api/ping', (req, res) => {
-	res.json({ ok: true, message: 'The kitchen is open' });
+// Get /api/menu: send the available menu items to the browser
+app.get("/api/menu", async (req, res) => {
+  try {
+    const items = await db.getMenu();
+    res.json(items);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Could not load the menu" });
+  }
 });
-
-app.listen(PORT, () => {
-	console.log('Hearth and Bean running at http://localhost:${PORT}');
-});
-
-
+//Connecting to the database before opening the kitchen
+db.init()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log("Hearth & Bean running at http://localhost:${PORT}");
+    });
+  })
+  .catch((err) => {
+    console.error("Could not connect to the database:", err.message);
+  });
