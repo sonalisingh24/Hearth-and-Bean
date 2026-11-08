@@ -18,6 +18,7 @@ app.get("/api/menu", async (req, res) => {
     res.status(500).json({ error: "Could not load the menu" });
   }
 });
+
 //Connecting to the database before opening the kitchen
 db.init()
   .then(() => {
@@ -28,6 +29,7 @@ db.init()
   .catch((err) => {
     console.error("Could not connect to the database:", err.message);
   });
+
 //input helpers
 const clean = (s, max = 200) =>
   String(s ?? "")
@@ -35,3 +37,18 @@ const clean = (s, max = 200) =>
     .slice(0, max);
 const emailOk = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 const phoneOk = (s) => /^[0-9+\-\s()]{7,16}$/.test(s);
+
+//Admin Protection
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
+
+function requireAdmin(req, res, next) {
+  if (!ADMIN_TOKEN || req.get("x-admin-token") !== ADMIN_TOKEN) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  next();
+}
+
+// used by the admin page to check the login
+app.get("/api/admin/check", requireAdmin, (req, res) => {
+  res.json({ ok: true });
+});
