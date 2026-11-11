@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hearth &amp; Bean — Neighbourhood Café</title>
+  <meta name="description" content="Hearth & Bean is a cozy neighbourhood café serving slow-brewed coffee, fresh bakes and warm bites.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- NAVBAR: brand, links, phone menu button and cart button -->
+  <header class="nav" id="top">
+    <a class="brand" href="#top">Hearth <span>&amp;</span> Bean</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <nav id="navLinks">
+      <a href="#menu">Menu</a>
+      <a href="#story">Our Story</a>
+      <a href="#reserve">Reserve</a>
+      <a href="#visit">Visit</a>
+    </nav>
+    <button class="cart-btn" id="cartBtn" aria-label="Open order cart">Your order <span id="cartCount">0</span></button>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="eyebrow">Open daily · 8 AM – 10 PM</p>
+        <h1>Slow mornings,<br><em>warm cups.</em></h1>
+        <p class="lead">A little corner café where the coffee is brewed with patience, the bakes come out of the oven at dawn, and nobody rushes you.</p>
+        <div class="hero-cta">
+          <a class="btn" href="#menu">See the menu</a>
+          <a class="btn btn-ghost" href="#reserve">Reserve a table</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU: app.js fills #menuTabs and #menuGrid from /api/menu -->
+    <section class="section" id="menu">
+      <div class="section-head">
+        <p class="eyebrow">What we serve</p>
+        <h2>The Menu</h2>
+        <p class="sub">Add anything to your order and we'll have it ready for pickup.</p>
+      </div>
+
+      <!-- MY OWN ADDITION: today's special banner -->
+      <div class="special">
+        <span class="special-tag">Today's special</span>
+        <p>A Hearth Latte with a warm slice of banana loaf. Ask at the counter.</p>
+      </div>
+
+      <div class="tabs" id="menuTabs" role="tablist"></div>
+      <div class="menu-grid" id="menuGrid">
+        <p class="muted">Loading the menu…</p>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="section story" id="story">
+      <div class="story-text">
+        <p class="eyebrow">Our story</p>
+        <h2>Started with a single grinder and a stubborn idea.</h2>
+        <p>Hearth &amp; Bean began as a weekend experiment: what if a café felt less like a stop on the way somewhere and more like the living room you wish you had? We roast in small batches, bake before sunrise, and keep the music low enough for conversation.</p>
+        <p>Bring a book, a laptop, or a friend you haven't seen in a while. The corner table by the window is the best seat in the house — but it's first come, first served.</p>
+        <ul class="values">
+          <li><strong>Small-batch beans</strong> sourced from estates we've actually visited.</li>
+          <li><strong>Baked daily</strong> — when it's gone, it's gone.</li>
+          <li><strong>No rush</strong> — stay as long as your cup (or your story) lasts.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- RESERVE: handled by app.js, posts to /api/reservations -->
+    <section class="section reserve" id="reserve">
+      <div class="section-head">
+        <p class="eyebrow">Save your seat</p>
+        <h2>Reserve a Table</h2>
+        <p class="sub">Tell us when you're coming and we'll keep a spot warm.</p>
+      </div>
+      <form class="form-card" id="reserveForm" novalidate>
+        <div class="row">
+          <label>Name<input name="name" required maxlength="80" autocomplete="name"></label>
+          <label>Phone<input name="phone" type="tel" required maxlength="20" autocomplete="tel"></label>
+        </div>
+        <div class="row three">
+          <label>Date<input name="date" type="date" required></label>
+          <label>Time<input name="time" type="time" min="08:00" max="21:30" step="900" required></label>
+          <label>Guests<input name="guests" type="number" min="1" max="12" value="2" required></label>
+        </div>
+        <label>Anything we should know? <small>(optional)</small>
+          <textarea name="notes" rows="3" maxlength="300" placeholder="Birthday, high chair, window seat…"></textarea>
+        </label>
+        <button class="btn" type="submit">Request reservation</button>
+        <p class="form-msg" id="reserveMsg" role="status"></p>
+      </form>
+    </section>
+
+    <!-- VISIT + CONTACT: contact form posts to /api/contact -->
+    <section class="section visit" id="visit">
+      <div class="section-head">
+        <p class="eyebrow">Come say hi</p>
+        <h2>Visit &amp; Contact</h2>
+      </div>
+      <div class="visit-grid">
+        <div class="info-card">
+          <h3>Find us</h3>
+          <p>14, Banyan Lane<br>Near the old clock tower<br>Your City, 491001</p>
+          <h3>Hours</h3>
+          <table class="hours">
+            <tr><td>Mon – Fri</td><td>8:00 AM – 10:00 PM</td></tr>
+            <tr><td>Sat – Sun</td><td>8:00 AM – 11:00 PM</td></tr>
+          </table>
+          <h3>Say hello</h3>
+          <p>hello@hearthandbean.example<br>+91 98765 43210</p>
+        </div>
+        <form class="form-card" id="contactForm" novalidate>
+          <h3>Send us a note</h3>
+          <label>Name<input name="name" required maxlength="80"></label>
+          <label>Email<input name="email" type="email" required maxlength="120"></label>
+          <label>Message<textarea name="message" rows="4" required maxlength="1000"></textarea></label>
+          <button class="btn" type="submit">Send message</button>
+          <p class="form-msg" id="contactMsg" role="status"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> Hearth &amp; Bean. Brewed with care.</p>
+  </footer>
+
+  <!-- CART DRAWER: slides in from the right; app.js fills #cartItems -->
+  <div class="overlay" id="overlay"></div>
+  <aside class="drawer" id="drawer" aria-label="Your order" aria-hidden="true">
+    <div class="drawer-head">
+      <h3>Your order</h3>
+      <button class="icon-btn" id="closeCart" aria-label="Close cart">✕</button>
+    </div>
+    <div class="drawer-body" id="cartItems"></div>
+    <form class="drawer-foot" id="orderForm" novalidate>
+      <div class="total-row"><span>Total</span><strong id="cartTotal">₹0</strong></div>
+      <input name="name" placeholder="Your name" required maxlength="80" autocomplete="name">
+      <input name="phone" type="tel" placeholder="Phone number" required maxlength="20" autocomplete="tel">
+      <input name="note" placeholder="Note (optional)" maxlength="300">
+      <button class="btn" type="submit">Place pickup order</button>
+      <p class="form-msg" id="orderMsg" role="status"></p>
+    </form>
+  </aside>
+
+  <script src="app.js"></script>
+</body>
+</html>
