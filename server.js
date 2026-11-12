@@ -152,6 +152,43 @@ app.delete("/api/admin/menu/:id", requireAdmin, async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+// change an order's status
+const ORDER_STATUSES = ["new", "preparing", "ready", "completed", "cancelled"];
+app.patch("/api/admin/orders/:id", requireAdmin, async (req, res) => {
+  try {
+    const status = req.body.status;
+    if (!ORDER_STATUSES.includes(status))
+      return res.status(400).json({ error: "Invalid status." });
+    const order = await db.updateOrderStatus(Number(req.params.id), status);
+    if (!order) return res.status(404).json({ error: "Order not found." });
+    res.json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// change a reservation's status
+const RESERVATION_STATUSES = ["pending", "confirmed", "cancelled"];
+app.patch("/api/admin/reservations/:id", requireAdmin, async (req, res) => {
+  try {
+    const status = req.body.status;
+    if (!RESERVATION_STATUSES.includes(status))
+      return res.status(400).json({ error: "Invalid status." });
+    const reservation = await db.updateReservationStatus(
+      Number(req.params.id),
+      status,
+    );
+    if (!reservation)
+      return res.status(404).json({ error: "Reservation not found." });
+    res.json(reservation);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 // ---------- reservations and contact ----------
 app.post("/api/reservations", async (req, res) => {
   try {
