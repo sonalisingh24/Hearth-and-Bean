@@ -77,7 +77,81 @@ app.post("/api/orders", async (req, res) => {
 app.get("/api/admin/check", requireAdmin, (req, res) => {
   res.json({ ok: true });
 });
+// view everything for the admin page
+app.get("/api/admin/data", requireAdmin, async (req, res) => {
+  try {
+    const [menu, orders, reservations, messages] = await Promise.all([
+      db.getAllMenu(),
+      db.listOrders(),
+      db.listReservations(),
+      db.listMessages(),
+    ]);
+    res.json({ menu, orders, reservations, messages });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
+// add a menu item
+app.post("/api/admin/menu", requireAdmin, async (req, res) => {
+  try {
+    const name = clean(req.body.name, 80);
+    const category = clean(req.body.category, 40);
+    const description = clean(req.body.description, 200);
+    const price = Number(req.body.price);
+    if (!name || !category)
+      return res.status(400).json({ error: "Name and category are required." });
+    if (!(price > 0))
+      return res.status(400).json({ error: "Price must be more than 0." });
+    const item = await db.addMenuItem({ name, category, description, price });
+    res.status(201).json(item);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// change a menu item (price, name, description, or hide/show)
+app.patch("/api/admin/menu/:id", requireAdmin, async (req, res) => {
+  try {
+    const fields = {};
+    if (req.body.name !== undefined) fields.name = clean(req.body.name, 80);
+    if (req.body.description !== undefined)
+      fields.description = clean(req.body.description, 200);
+    if (req.body.price !== undefined) {
+      const price = Number(req.body.price);
+      if (!(price > 0))
+        return res.status(400).json({ error: "Price must be more than 0." });
+      fields.price = price;
+    }
+    if (req.body.available !== undefined)
+      fields.available = Boolean(req.body.available);
+    const item = await db.updateMenuItem(Number(req.params.id), fields);
+    if (!item) return res.status(404).json({ error: "Item not found." });
+    res.json(item);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// delete a menu item
+app.delete("/api/admin/menu/:id", requireAdmin, async (req, res) => {
+  try {
+    const ok = await db.deleteMenuItem(Number(req.params.id));
+    if (!ok) return res.status(404).json({ error: "Item not found." });
+    res.json({ ok: true });
+  } catch (err) {
+    if (err.code === "23503") {
+      return res.status(409).json({
+        error: "This item is in past orders. Hide it instead of deleting it.",
+      });
+    }
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 // ---------- reservations and contact ----------
 app.post("/api/reservations", async (req, res) => {
   try {
